@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import {
   Home,
-  LayoutDashboard,
   ArrowLeftRight,
   Upload,
   BarChart3,
@@ -16,7 +15,6 @@ import { useImport } from '../../contexts/ImportContext'
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home, end: true },
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
   { to: '/import', label: 'Import Data', icon: Upload },
   { to: '/charts', label: 'Analytics', icon: BarChart3 },

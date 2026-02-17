@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Upload,
@@ -5,9 +6,9 @@ import {
   Tags,
   ArrowRight,
   Receipt,
-  Layers,
   DollarSign,
 } from 'lucide-react'
+import { getTransactions, getCategories } from '../api/client'
 
 const features = [
   {
@@ -15,7 +16,7 @@ const features = [
     iconClass: 'card__icon card__icon--emerald',
     title: 'Import',
     desc: 'Upload CSV or JSON files — preview, map columns, and save.',
-    pill: 'Coming soon',
+    pill: '',
     pillClass: 'pill',
     to: '/import',
     btnLabel: 'Go to Import',
@@ -25,7 +26,7 @@ const features = [
     iconClass: 'card__icon card__icon--cyan',
     title: 'Analytics',
     desc: 'Monthly spend trends, category breakdowns, and insights.',
-    pill: 'Coming soon',
+    pill: '',
     pillClass: 'pill',
     to: '/charts',
     btnLabel: 'View Charts',
@@ -42,28 +43,101 @@ const features = [
   },
 ]
 
-const stats = [
-  {
-    icon: Receipt,
-    iconClass: 'stat__icon stat__icon--emerald',
-    value: '0',
-    label: 'Transactions',
-  },
-  {
-    icon: Layers,
-    iconClass: 'stat__icon stat__icon--cyan',
-    value: '0',
-    label: 'Categories',
-  },
-  {
-    icon: DollarSign,
-    iconClass: 'stat__icon stat__icon--amber',
-    value: '$0.00',
-    label: 'This Month',
-  },
-]
+const COLORS = {
+  income: '#10b981',
+  expense: '#ef4444',
+}
 
 export default function Home() {
+  const [stats, setStats] = useState({
+    transactionCount: 0,
+    categoryCount: 0,
+    income: 0,
+    expenses: 0,
+    balance: 0,
+  })
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const getMonthRange = () => {
+    // February 2026 (current context date is Feb 17, 2026)
+    const start = new Date(2026, 1, 1) // Month is 0-indexed
+    const end = new Date(2026, 1, 28, 23, 59, 59)
+    return { start, end }
+  }
+
+  const isTransactionInMonth = (transaction) => {
+    const { start, end } = getMonthRange()
+    const txDate = new Date(transaction.date)
+    return txDate >= start && txDate <= end
+  }
+
+  const calculateStats = (txns, cats) => {
+    // Filter transactions for current month
+    const monthlyTxns = txns.filter(isTransactionInMonth)
+
+    let income = 0
+    let expenses = 0
+
+    monthlyTxns.forEach((txn) => {
+      const amount = parseFloat(txn.amount) || 0
+      if (amount > 0) {
+        income += amount
+      } else if (amount < 0) {
+        expenses += Math.abs(amount)
+      }
+    })
+
+    return {
+      transactionCount: txns.length,
+      categoryCount: cats.length,
+      income: parseFloat(income.toFixed(2)),
+      expenses: parseFloat(expenses.toFixed(2)),
+      balance: parseFloat((income - expenses).toFixed(2)),
+    }
+  }
+
+  const loadData = async () => {
+    try {
+      const [txnData, catData] = await Promise.all([
+        getTransactions({ take: 1000 }),
+        getCategories(),
+      ])
+
+      const txns = txnData.transactions || []
+      const cats = catData || []
+
+      // Calculate stats
+      const calculatedStats = calculateStats(txns, cats)
+      setStats(calculatedStats)
+    } catch (err) {
+      console.error('Error loading home data:', err)
+    }
+  }
+
+  const statsList = [
+    {
+      icon: Receipt,
+      iconClass: 'stat__icon stat__icon--emerald',
+      value: stats.transactionCount.toString(),
+      label: 'Transactions',
+    },
+    {
+      icon: DollarSign,
+      iconClass: 'stat__icon stat__icon--emerald',
+      value: `$${stats.income.toFixed(2)}`,
+      label: 'Income',
+    },
+    {
+      icon: DollarSign,
+      iconClass: 'stat__icon stat__icon--amber',
+      value: `$${stats.expenses.toFixed(2)}`,
+      label: 'Expenses',
+    },
+  ]
+
   return (
     <div className="page">
       <section className="hero">
@@ -90,7 +164,12 @@ export default function Home() {
           </div>
 
           <div className="hero__statsRight">
-            {stats.map((s) => {
+            <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+              <div style={{ fontSize: '0.875rem', color: '#9ca3af', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                February 2026
+              </div>
+            </div>
+            {statsList.map((s) => {
               const Icon = s.icon
               return (
                 <div key={s.label} className="heroStat">
@@ -131,7 +210,6 @@ export default function Home() {
           )
         })}
       </section>
-
     </div>
   )
 }
