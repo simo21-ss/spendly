@@ -6,6 +6,7 @@ import {
   Upload,
   BarChart3,
   Tags,
+  Zap,
   Wallet,
   PanelLeftClose,
   PanelLeftOpen,
@@ -18,6 +19,7 @@ const navItems = [
   { to: '/import', label: 'Import Data', icon: Upload },
   { to: '/charts', label: 'Analytics', icon: BarChart3 },
   { to: '/categories', label: 'Categories', icon: Tags },
+  { to: '/rules', label: 'Rules', icon: Zap },
 ]
 
 export default function Sidebar({ collapsed, onToggle }) {

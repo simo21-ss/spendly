@@ -35,10 +35,10 @@ const features = [
     iconClass: 'card__icon card__icon--violet',
     title: 'Rules',
     desc: 'Auto-categorize with keyword and merchant matching rules.',
-    pill: 'Planned',
-    pillClass: 'pill pill--planned',
-    to: '/categories',
-    btnLabel: 'Manage Categories',
+    pill: '',
+    pillClass: 'pill',
+    to: '/rules',
+    btnLabel: 'Manage Rules',
   },
 ]
 
@@ -121,7 +121,7 @@ export default function Home() {
                   <h2 className="card__title">{f.title}</h2>
                   <p className="card__desc">{f.desc}</p>
                 </div>
-                <span className={f.pillClass}>{f.pill}</span>
+                {f.pill && <span className={f.pillClass}>{f.pill}</span>}
               </div>
               <Link className="btn btn--secondary" to={f.to}>
                 {f.btnLabel}

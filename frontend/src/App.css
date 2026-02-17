@@ -167,6 +167,10 @@
   cursor: pointer;
 }
 
+.card .btn {
+  display: flex;
+}
+
 .btn svg {
   width: 16px;
   height: 16px;
@@ -202,6 +206,8 @@
   background: var(--surface-card);
   color: var(--text);
   border-color: var(--border);
+  margin-top: auto;
+  width: 100%;
 }
 
 .btn--secondary:hover {
