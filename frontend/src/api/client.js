@@ -131,7 +131,11 @@ export async function testRule(data) {
 // ============ TRANSACTIONS ============
 export async function getTransactions(filters = {}) {
   const params = new URLSearchParams();
-  if (filters.categoryId) params.append('categoryId', filters.categoryId);
+  if (filters.categoryIds && filters.categoryIds.length) {
+    params.append('categoryId', filters.categoryIds.join(','));
+  } else if (filters.categoryId) {
+    params.append('categoryId', filters.categoryId);
+  }
   if (filters.skip !== undefined) params.append('skip', filters.skip);
   if (filters.take !== undefined) params.append('take', filters.take);
   if (filters.sortBy) params.append('sortBy', filters.sortBy);

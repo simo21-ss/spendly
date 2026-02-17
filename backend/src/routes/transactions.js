@@ -16,7 +16,15 @@ module.exports = (prisma) => {
 
       const where = {};
       if (categoryId) {
-        where.categoryId = categoryId;
+        const categoryIds = String(categoryId)
+          .split(',')
+          .map((id) => id.trim())
+          .filter(Boolean);
+        if (categoryIds.length > 1) {
+          where.categoryId = { in: categoryIds };
+        } else if (categoryIds.length === 1) {
+          where.categoryId = categoryIds[0];
+        }
       }
 
       const [transactions, total] = await Promise.all([

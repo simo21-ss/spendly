@@ -20,12 +20,15 @@ import './Transactions.css';
 
 export default function TransactionsPage() {
   const columnMenuRef = useRef(null);
+  const categoryMenuRef = useRef(null);
+  const isInitialLoadRef = useRef(true);
   const COLUMN_STORAGE_KEY = 'transactions.visibleColumns.v1';
   const ITEMS_PER_PAGE = 25;
 
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editTransactionItem, setEditTransactionItem] = useState(null);
@@ -47,9 +50,11 @@ export default function TransactionsPage() {
   const [columnMenuOpen, setColumnMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+  const [hasInitializedCategories, setHasInitializedCategories] = useState(false);
   
   // Filters
-  const [categoryFilter, setCategoryFilter] = useState('');
   const [sortColumn, setSortColumn] = useState('date');
   const [sortDirection, setSortDirection] = useState('desc');
   const [visibleColumns, setVisibleColumns] = useState(() => {
@@ -79,8 +84,23 @@ export default function TransactionsPage() {
   });
 
   useEffect(() => {
-    loadData();
-  }, [categoryFilter, currentPage]);
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    loadTransactions();
+  }, [selectedCategoryIds, currentPage]);
+
+  useEffect(() => {
+    if (!hasInitializedCategories && categories.length > 0) {
+      setSelectedCategoryIds(categories.map((cat) => cat.id));
+      setHasInitializedCategories(true);
+    }
+  }, [categories, hasInitializedCategories]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategoryIds]);
 
   useEffect(() => {
     try {
@@ -91,37 +111,74 @@ export default function TransactionsPage() {
   }, [visibleColumns]);
 
   useEffect(() => {
-    if (!columnMenuOpen) return undefined;
+    if (!columnMenuOpen && !categoryMenuOpen) return undefined;
     const handleClick = (event) => {
-      if (columnMenuRef.current && !columnMenuRef.current.contains(event.target)) {
+      const clickedColumnMenu = columnMenuRef.current && columnMenuRef.current.contains(event.target);
+      const clickedCategoryMenu = categoryMenuRef.current && categoryMenuRef.current.contains(event.target);
+      if (!clickedColumnMenu && !clickedCategoryMenu) {
         setColumnMenuOpen(false);
+        setCategoryMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, [columnMenuOpen]);
+  }, [columnMenuOpen, categoryMenuOpen]);
 
-  const loadData = async () => {
+  const loadCategories = async () => {
     try {
-      setLoading(true);
+      const catData = await getCategories();
+      setCategories(catData || []);
+      if (!hasInitializedCategories && catData?.length) {
+        setSelectedCategoryIds(catData.map((cat) => cat.id));
+        setHasInitializedCategories(true);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const loadTransactions = async () => {
+    try {
+      if (isInitialLoadRef.current) {
+        setLoading(true);
+      } else {
+        setIsRefreshing(true);
+      }
       const skip = (currentPage - 1) * ITEMS_PER_PAGE;
-      const [txnData, catData] = await Promise.all([
-        getTransactions({ 
-          categoryId: categoryFilter || undefined,
-          skip,
-          take: ITEMS_PER_PAGE
-        }),
-        getCategories()
-      ]);
+      const shouldFilterByCategory =
+        categories.length > 0 &&
+        selectedCategoryIds.length > 0 &&
+        selectedCategoryIds.length < categories.length;
+      const txnData = await getTransactions({ 
+        categoryIds: shouldFilterByCategory ? selectedCategoryIds : undefined,
+        skip,
+        take: ITEMS_PER_PAGE
+      });
       setTransactions(txnData.transactions || []);
       setTotalCount(txnData.pagination?.total || 0);
-      setCategories(catData || []);
       setError(null);
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      if (isInitialLoadRef.current) {
+        setLoading(false);
+        isInitialLoadRef.current = false;
+      }
+      setIsRefreshing(false);
     }
+  };
+
+  const toggleCategory = (categoryId) => {
+    setSelectedCategoryIds((prev) => {
+      if (prev.includes(categoryId)) {
+        return prev.filter((id) => id !== categoryId);
+      }
+      return [...prev, categoryId];
+    });
+  };
+
+  const selectAllCategories = () => {
+    setSelectedCategoryIds(categories.map((cat) => cat.id));
   };
 
   const handleDeleteClick = (transaction) => {
@@ -302,7 +359,7 @@ export default function TransactionsPage() {
     setSortDirection('asc');
   };
 
-  if (loading) {
+  if (loading && transactions.length === 0) {
     return (
       <div className="page">
         <header className="page__header">
@@ -364,6 +421,47 @@ export default function TransactionsPage() {
         ) : (
           <>
             <div className="transactions-summary">
+              <div className="summary-left">
+                <div className="category-filter" ref={categoryMenuRef}>
+                  <button
+                    type="button"
+                    className="category-filter__button"
+                    onClick={() => setCategoryMenuOpen((prev) => !prev)}
+                    aria-expanded={categoryMenuOpen}
+                    aria-haspopup="menu"
+                  >
+                    <ListFilter size={16} />
+                    Categories
+                    <ChevronDown size={14} />
+                  </button>
+                  {categoryMenuOpen && (
+                    <div className="category-filter__menu" role="menu">
+                      <button
+                        type="button"
+                        className="category-filter__all"
+                        onClick={selectAllCategories}
+                        disabled={categories.length === 0}
+                      >
+                        Select all
+                      </button>
+                      <div className="category-filter__list">
+                        {categories.map((category) => (
+                          <label key={category.id} className="category-filter__item">
+                            <input
+                              type="checkbox"
+                              checked={selectedCategoryIds.includes(category.id)}
+                              onChange={() => toggleCategory(category.id)}
+                            />
+                            <span className="category-filter__label">
+                              {category.icon} {category.name}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
               <div className="summary-actions">
                 <div className="column-chooser" ref={columnMenuRef}>
                   <button
@@ -399,7 +497,7 @@ export default function TransactionsPage() {
               </div>
             </div>
 
-            <div className="transactions-table-wrapper">
+            <div className={`transactions-table-wrapper${isRefreshing ? ' is-refreshing' : ''}`}>
               <table className="transactions-table">
                 <thead>
                   <tr>
