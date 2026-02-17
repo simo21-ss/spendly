@@ -24,19 +24,44 @@ model Category {
 }
 
 model Transaction {
-  id          String   @id @default(cuid())
-  date        DateTime
-  description String
-  amount      Float
-  merchant    String?
-  notes       String?
-  categoryId  String?
-  category    Category? @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  String             @id @default(cuid())
+  date                DateTime
+  description         String
+  amount              Float
+  merchant            String?
+  notes               String?
+  categoryId          String?
+  category            Category?          @relation(fields: [categoryId], references: [id])
+  transactionImportId String?
+  transactionImport   TransactionImport? @relation(fields: [transactionImportId], references: [id])
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 
   @@index([categoryId])
   @@index([date])
+  @@index([transactionImportId])
+}
+
+model TransactionImport {
+  id             String        @id @default(cuid())
+  filename       String
+  fileType       String // 'csv' or 'json'
+  status         String // 'pending', 'processing', 'completed', 'failed', 'partial'
+  totalRows      Int
+  validRows      Int
+  importedCount  Int           @default(0)
+  skippedCount   Int           @default(0)
+  errorCount     Int           @default(0)
+  errorDetails   String? // JSON string of error messages
+  columnMapping  String? // JSON string of column mapping
+  createdAt      DateTime      @default(now())
+  completedAt    DateTime?
+  updatedAt      DateTime      @updatedAt
+  
+  transactions   Transaction[]
+
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Rule {

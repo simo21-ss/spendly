@@ -1,0 +1,84 @@
+[
+  {
+    "date": "2026-01-05",
+    "description": "Morning espresso and croissant",
+    "amount": -7.25,
+    "merchant": "Philz Coffee"
+  },
+  {
+    "date": "2026-01-08",
+    "description": "Weekly produce shopping",
+    "amount": -52.34,
+    "merchant": "Farmers Market"
+  },
+  {
+    "date": "2026-01-10",
+    "description": "Yoga class package",
+    "amount": -120.00,
+    "merchant": "CorePower Yoga",
+    "notes": "10 class pass"
+  },
+  {
+    "date": "2026-01-12",
+    "description": "Office lunch delivery",
+    "amount": -18.50,
+    "merchant": "DoorDash",
+    "notes": "From Chipotle"
+  },
+  {
+    "date": "2026-01-15",
+    "description": "New running shoes",
+    "amount": -134.99,
+    "merchant": "Nike Store",
+    "notes": "Pegasus 40"
+  },
+  {
+    "date": "2026-01-18",
+    "description": "Concert tickets",
+    "amount": -185.00,
+    "merchant": "Ticketmaster",
+    "notes": "Two tickets for March show"
+  },
+  {
+    "date": "2026-01-20",
+    "description": "Grocery store",
+    "amount": -198.67,
+    "merchant": "Costco",
+    "notes": "Bulk shopping"
+  },
+  {
+    "date": "2026-01-22",
+    "description": "Car maintenance",
+    "amount": -289.50,
+    "merchant": "Jiffy Lube",
+    "notes": "Oil change and tire rotation"
+  },
+  {
+    "date": "2026-01-25",
+    "description": "Birthday gift",
+    "amount": -75.00,
+    "merchant": "Nordstrom",
+    "notes": "For friend's birthday"
+  },
+  {
+    "date": "2026-01-27",
+    "description": "Dentist appointment",
+    "amount": -225.00,
+    "merchant": "Bright Smile Dental",
+    "notes": "Regular cleaning"
+  },
+  {
+    "date": "2026-01-29",
+    "description": "Streaming services",
+    "amount": -24.98,
+    "merchant": "Hulu + Disney+",
+    "notes": "Monthly bundle subscription"
+  },
+  {
+    "date": "2026-01-31",
+    "description": "Home improvement supplies",
+    "amount": -167.43,
+    "merchant": "Lowe's",
+    "notes": "Paint and brushes for bedroom"
+  }
+]

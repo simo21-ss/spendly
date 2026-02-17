@@ -10,7 +10,9 @@ import {
   Wallet,
   PanelLeftClose,
   PanelLeftOpen,
+  Loader2,
 } from 'lucide-react'
+import { useImport } from '../../contexts/ImportContext'
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home, end: true },
@@ -23,6 +25,8 @@ const navItems = [
 ]
 
 export default function Sidebar({ collapsed, onToggle }) {
+  const { isImporting } = useImport();
+  
   return (
     <aside className={collapsed ? 'sidebar sidebar--collapsed' : 'sidebar'}>
       <div className={collapsed ? 'sidebar__top sidebar__top--collapsed' : 'sidebar__top'}>
@@ -65,6 +69,7 @@ export default function Sidebar({ collapsed, onToggle }) {
       <nav className="nav" aria-label="Primary">
         {navItems.map((item) => {
           const Icon = item.icon
+          const showSpinner = isImporting && item.to === '/import'
           return (
             <NavLink
               key={item.to}
@@ -77,6 +82,9 @@ export default function Sidebar({ collapsed, onToggle }) {
             >
               <Icon className="nav__icon" strokeWidth={1.8} />
               {!collapsed && <span className="nav__label">{item.label}</span>}
+              {showSpinner && (
+                <Loader2 className="nav__spinner" size={16} />
+              )}
             </NavLink>
           )
         })}

@@ -185,3 +185,75 @@ export async function bulkRecategorize(transactionIds) {
   if (!response.ok) throw new Error('Failed to recategorize transactions');
   return response.json();
 }
+
+// ============ TRANSACTION IMPORTS ============
+export async function getTransactionImports(filters = {}) {
+  const params = new URLSearchParams();
+  if (filters.status) params.append('status', filters.status);
+  if (filters.skip !== undefined) params.append('skip', filters.skip);
+  if (filters.take !== undefined) params.append('take', filters.take);
+  if (filters.sortBy) params.append('sortBy', filters.sortBy);
+  if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
+
+  const response = await fetch(`${API_BASE_URL}/transaction-imports?${params}`);
+  if (!response.ok) throw new Error('Failed to fetch transaction imports');
+  return response.json();
+}
+
+export async function getTransactionImport(id) {
+  const response = await fetch(`${API_BASE_URL}/transaction-imports/${id}`);
+  if (!response.ok) throw new Error('Failed to fetch transaction import');
+  return response.json();
+}
+
+export async function createTransactionImport(data) {
+  const response = await fetch(`${API_BASE_URL}/transaction-imports`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to create transaction import');
+  }
+  return response.json();
+}
+
+export async function updateTransactionImport(id, data) {
+  const response = await fetch(`${API_BASE_URL}/transaction-imports/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update transaction import');
+  }
+  return response.json();
+}
+
+export async function deleteTransactionImport(id, deleteTransactions = false) {
+  const params = new URLSearchParams();
+  if (deleteTransactions) params.append('deleteTransactions', 'true');
+
+  const response = await fetch(`${API_BASE_URL}/transaction-imports/${id}?${params}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) throw new Error('Failed to delete transaction import');
+  // DELETE returns 204 No Content
+  if (response.status === 204) return { success: true };
+  return response.json();
+}
+
+export async function bulkCreateTransactions(transactionImportId, transactions) {
+  const response = await fetch(`${API_BASE_URL}/transactions/bulk`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ transactionImportId, transactions }),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to bulk create transactions');
+  }
+  return response.json();
+}

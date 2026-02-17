@@ -1,6 +1,7 @@
 const categoriesRouter = require('./categories');
 const rulesRouter = require('./rules');
 const transactionsRouter = require('./transactions');
+const transactionImportsRouter = require('./transactionImports');
 
 /**
  * Initializes and returns all application routes
@@ -11,6 +12,7 @@ module.exports = (prisma) => {
   return {
     categories: categoriesRouter(prisma),
     rules: rulesRouter(prisma),
-    transactions: transactionsRouter(prisma)
+    transactions: transactionsRouter(prisma),
+    transactionImports: transactionImportsRouter(prisma)
   };
 };

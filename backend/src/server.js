@@ -27,6 +27,7 @@ const routes = initializeRoutes(prisma);
 app.use('/api', routes.categories);
 app.use('/api', routes.rules);
 app.use('/api', routes.transactions);
+app.use('/api', routes.transactionImports);
 
 
 // Start server

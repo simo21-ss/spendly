@@ -1,0 +1,18 @@
+Date,Merchant,Details,Amount,Category
+2026-02-01,Whole Foods Market,Organic groceries,-145.67,Shopping
+2026-02-02,Uber Technologies,Ride to airport,-32.50,Transportation
+2026-02-03,Delta Airlines,Flight to NYC,-425.00,Travel
+2026-02-03,Marriott Hotels,Hotel stay 2 nights,-389.98,Travel
+2026-02-04,Starbucks,Coffee and pastry,-8.45,Food
+2026-02-05,Capital One,Payment received,500.00,Payment
+2026-02-06,Apple Store,AirPods Pro,-249.00,Electronics
+2026-02-07,Target,Household items,-78.34,Shopping
+2026-02-08,CVS Pharmacy,Medications,-45.23,Health
+2026-02-09,Shell,Gas station,-48.90,Auto
+2026-02-10,LA Fitness,Monthly membership,-49.99,Health
+2026-02-11,Domino's Pizza,Delivery dinner,-28.75,Food
+2026-02-12,Amazon Prime,Monthly subscription,-14.99,Entertainment
+2026-02-13,Home Depot,Garden supplies,-156.42,Home
+2026-02-14,Florist,Valentine's flowers,-89.99,Gifts
+2026-02-15,Steakhouse,Romantic dinner,-178.50,Food
+2026-02-16,BP Gas Station,Fuel,-55.00,Auto

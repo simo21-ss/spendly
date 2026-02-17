@@ -251,6 +251,22 @@
   font-weight: 600;
 }
 
+.nav__spinner {
+  margin-left: auto;
+  color: var(--primary);
+  animation: spin 1s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ── Collapsed state ── */
 .sidebar--collapsed .nav__link {
   justify-content: center;

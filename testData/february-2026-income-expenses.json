@@ -1,0 +1,184 @@
+[
+  {
+    "date": "2026-02-01T08:30:00.000Z",
+    "description": "Salary deposit - February",
+    "amount": 4500.00,
+    "merchant": "Employer Payroll",
+    "notes": "Monthly salary"
+  },
+  {
+    "date": "2026-02-02T14:20:00.000Z",
+    "description": "Mortgage payment",
+    "amount": -2100.00,
+    "merchant": "Wells Fargo Mortgage",
+    "notes": "Monthly house payment"
+  },
+  {
+    "date": "2026-02-03T10:15:00.000Z",
+    "description": "Grocery shopping",
+    "amount": -167.89,
+    "merchant": "Safeway",
+    "notes": "Weekend groceries"
+  },
+  {
+    "date": "2026-02-04T16:45:00.000Z",
+    "description": "Gas station",
+    "amount": -72.50,
+    "merchant": "Chevron",
+    "notes": "Full tank"
+  },
+  {
+    "date": "2026-02-06T09:00:00.000Z",
+    "description": "Stock dividend",
+    "amount": 85.40,
+    "merchant": "E*TRADE",
+    "notes": "Quarterly dividend"
+  },
+  {
+    "date": "2026-02-07T12:30:00.000Z",
+    "description": "Lunch with colleagues",
+    "amount": -38.90,
+    "merchant": "Panera Bread",
+    "notes": "Team lunch"
+  },
+  {
+    "date": "2026-02-08T19:00:00.000Z",
+    "description": "Dinner date",
+    "amount": -145.75,
+    "merchant": "Ruth's Chris",
+    "notes": "Special occasion"
+  },
+  {
+    "date": "2026-02-10T11:00:00.000Z",
+    "description": "Freelance project payment",
+    "amount": 1500.00,
+    "merchant": "Design Agency",
+    "notes": "Website redesign project"
+  },
+  {
+    "date": "2026-02-11T15:20:00.000Z",
+    "description": "Clothing shopping",
+    "amount": -234.50,
+    "merchant": "Nordstrom",
+    "notes": "New work attire"
+  },
+  {
+    "date": "2026-02-12T08:45:00.000Z",
+    "description": "Coffee and breakfast",
+    "amount": -12.75,
+    "merchant": "Peet's Coffee",
+    "notes": "Morning fuel"
+  },
+  {
+    "date": "2026-02-13T13:00:00.000Z",
+    "description": "Amazon purchase",
+    "amount": -89.99,
+    "merchant": "Amazon Prime",
+    "notes": "Kitchen gadgets"
+  },
+  {
+    "date": "2026-02-14T18:30:00.000Z",
+    "description": "Valentine's dinner",
+    "amount": -198.50,
+    "merchant": "The Capital Grille",
+    "notes": "Valentine's Day celebration"
+  },
+  {
+    "date": "2026-02-15T10:00:00.000Z",
+    "description": "Rental income",
+    "amount": 1800.00,
+    "merchant": "Tenant Payment",
+    "notes": "February rent from property"
+  },
+  {
+    "date": "2026-02-16T14:30:00.000Z",
+    "description": "Car maintenance",
+    "amount": -345.00,
+    "merchant": "Toyota Service Center",
+    "notes": "Oil change and inspection"
+  },
+  {
+    "date": "2026-02-17T09:15:00.000Z",
+    "description": "Gym membership",
+    "amount": -65.00,
+    "merchant": "LA Fitness",
+    "notes": "Monthly membership"
+  },
+  {
+    "date": "2026-02-18T16:00:00.000Z",
+    "description": "Medical appointment",
+    "amount": -150.00,
+    "merchant": "Family Healthcare",
+    "notes": "Annual checkup copay"
+  },
+  {
+    "date": "2026-02-19T11:45:00.000Z",
+    "description": "Grocery shopping",
+    "amount": -112.34,
+    "merchant": "Trader Joe's",
+    "notes": "Midweek shopping"
+  },
+  {
+    "date": "2026-02-20T20:00:00.000Z",
+    "description": "Uber Eats delivery",
+    "amount": -45.60,
+    "merchant": "Uber Eats",
+    "notes": "Friday night dinner"
+  },
+  {
+    "date": "2026-02-21T10:30:00.000Z",
+    "description": "Consulting payment received",
+    "amount": 950.00,
+    "merchant": "Business Solutions Inc",
+    "notes": "Marketing consultation"
+  },
+  {
+    "date": "2026-02-22T14:00:00.000Z",
+    "description": "Bookstore purchase",
+    "amount": -56.80,
+    "merchant": "Barnes & Noble",
+    "notes": "New books"
+  },
+  {
+    "date": "2026-02-23T17:30:00.000Z",
+    "description": "Pharmacy refill",
+    "amount": -28.90,
+    "merchant": "CVS Pharmacy",
+    "notes": "Monthly prescriptions"
+  },
+  {
+    "date": "2026-02-24T12:00:00.000Z",
+    "description": "Cash back rewards",
+    "amount": 42.35,
+    "merchant": "Credit Card Rewards",
+    "notes": "Monthly cashback"
+  },
+  {
+    "date": "2026-02-25T15:45:00.000Z",
+    "description": "Pet grooming",
+    "amount": -75.00,
+    "merchant": "Pampered Pets Spa",
+    "notes": "Dog grooming service"
+  },
+  {
+    "date": "2026-02-26T19:30:00.000Z",
+    "description": "Concert tickets",
+    "amount": -220.00,
+    "merchant": "Ticketmaster",
+    "notes": "Two tickets for March concert"
+  },
+  {
+    "date": "2026-02-27T10:15:00.000Z",
+    "description": "Interest income",
+    "amount": 15.25,
+    "merchant": "Savings Account",
+    "notes": "Monthly interest"
+  },
+  {
+    "date": "2026-02-28T13:30:00.000Z",
+    "description": "Home supplies",
+    "amount": -134.67,
+    "merchant": "Home Depot",
+    "notes": "Garden and cleaning supplies"
+  }
+]
