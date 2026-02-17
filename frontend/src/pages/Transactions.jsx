@@ -11,7 +11,9 @@ import {
   ChevronDown,
   ChevronUp,
   ArrowUpDown,
-  Pencil
+  Pencil,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { getTransactions, getCategories, deleteTransaction, updateTransaction } from '../api/client';
 import './Transactions.css';
@@ -19,6 +21,7 @@ import './Transactions.css';
 export default function TransactionsPage() {
   const columnMenuRef = useRef(null);
   const COLUMN_STORAGE_KEY = 'transactions.visibleColumns.v1';
+  const ITEMS_PER_PAGE = 25;
 
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -42,6 +45,8 @@ export default function TransactionsPage() {
   });
   const [editSaving, setEditSaving] = useState(false);
   const [columnMenuOpen, setColumnMenuOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   
   // Filters
   const [categoryFilter, setCategoryFilter] = useState('');
@@ -75,7 +80,7 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     loadData();
-  }, [categoryFilter]);
+  }, [categoryFilter, currentPage]);
 
   useEffect(() => {
     try {
@@ -99,14 +104,17 @@ export default function TransactionsPage() {
   const loadData = async () => {
     try {
       setLoading(true);
+      const skip = (currentPage - 1) * ITEMS_PER_PAGE;
       const [txnData, catData] = await Promise.all([
         getTransactions({ 
           categoryId: categoryFilter || undefined,
-          take: 100
+          skip,
+          take: ITEMS_PER_PAGE
         }),
         getCategories()
       ]);
       setTransactions(txnData.transactions || []);
+      setTotalCount(txnData.pagination?.total || 0);
       setCategories(catData || []);
       setError(null);
     } catch (err) {
@@ -292,18 +300,18 @@ export default function TransactionsPage() {
   if (loading) {
     return (
       <div className="page">
-        <header className="pageHeader">
-          <div className="pageHeader__icon">
+        <header className="page__header">
+          <div className="page__header-icon">
             <ArrowLeftRight />
           </div>
-          <div className="pageHeader__text">
-            <h1 className="pageTitle">Transactions</h1>
-            <p className="muted">Browse, search, and filter your imported transactions.</p>
+          <div className="page__header-text">
+            <h1 className="page__title">Transactions</h1>
+            <p className="page__subtitle">Browse, search, and filter your imported transactions.</p>
           </div>
         </header>
-        <div className="panel">
-          <p className="loading-message">Loading transactions...</p>
-        </div>
+        <section className="section">
+          <p className="loading">Loading transactions...</p>
+        </section>
       </div>
     );
   }
@@ -311,85 +319,35 @@ export default function TransactionsPage() {
   if (error) {
     return (
       <div className="page">
-        <header className="pageHeader">
-          <div className="pageHeader__icon">
+        <header className="page__header">
+          <div className="page__header-icon">
             <ArrowLeftRight />
           </div>
-          <div className="pageHeader__text">
-            <h1 className="pageTitle">Transactions</h1>
-            <p className="muted">Browse, search, and filter your imported transactions.</p>
+          <div className="page__header-text">
+            <h1 className="page__title">Transactions</h1>
+            <p className="page__subtitle">Browse, search, and filter your imported transactions.</p>
           </div>
         </header>
-        <div className="panel">
-          <p className="error-message">Error: {error}</p>
-        </div>
+        <section className="section">
+          <div className="alert alert--error"><AlertCircle size={20} /><span>Error: {error}</span></div>
+        </section>
       </div>
     );
   }
 
   return (
     <div className="page">
-      <header className="pageHeader">
-        <div className="pageHeader__icon">
+      <header className="page__header">
+        <div className="page__header-icon">
           <ArrowLeftRight />
         </div>
-        <div className="pageHeader__text">
-          <h1 className="pageTitle">Transactions</h1>
-          <p className="muted">Browse, search, and filter your imported transactions.</p>
+        <div className="page__header-text">
+          <h1 className="page__title">Transactions</h1>
+          <p className="page__subtitle">Browse, search, and filter your imported transactions.</p>
         </div>
       </header>
 
-      <div className="panel">
-        {/* Filters */}
-        <div className="transactions-filters">
-          <div className="filter-group">
-            <label htmlFor="category-filter">
-              <ListFilter size={16} />
-              Filter by Category
-            </label>
-            <select
-              id="category-filter"
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <option value="">All Categories</option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.icon} {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label htmlFor="sort-by">Sort By</label>
-            <select
-              id="sort-by"
-              value={sortColumn}
-              onChange={(e) => setSortColumn(e.target.value)}
-            >
-              {columns
-                .filter((column) => column.key !== 'actions')
-                .map((column) => (
-                  <option key={column.key} value={column.key}>
-                    {column.label}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label htmlFor="sort-order">Order</label>
-            <select
-              id="sort-order"
-              value={sortDirection}
-              onChange={(e) => setSortDirection(e.target.value)}
-            >
-              <option value="desc">Descending</option>
-              <option value="asc">Ascending</option>
-            </select>
-          </div>
-        </div>
+      <section className="section">
 
         {/* Transactions Table */}
         {transactions.length === 0 ? (
@@ -549,9 +507,34 @@ export default function TransactionsPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination */}
+            {totalCount > ITEMS_PER_PAGE && (
+              <div className="pagination">
+                <button
+                  className="pagination__button"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  title="Previous page"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <div className="pagination__info">
+                  Page {currentPage} of {Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                </div>
+                <button
+                  className="pagination__button"
+                  onClick={() => setCurrentPage(p => p + 1)}
+                  disabled={currentPage >= Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                  title="Next page"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            )}
           </>
         )}
-      </div>
+      </section>
 
       {editTransactionItem && (
         <>

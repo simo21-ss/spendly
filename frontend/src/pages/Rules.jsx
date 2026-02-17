@@ -34,17 +34,17 @@ export default function RulesPage() {
 
   return (
     <div className="page">
-      <header className="pageHeader">
-        <div className="pageHeader__icon">
+      <header className="page__header">
+        <div className="page__header-icon">
           <Zap />
         </div>
-        <div className="pageHeader__text">
-          <h1 className="pageTitle">Categorization Rules</h1>
-          <p className="muted">Create and manage automatic transaction categorization rules.</p>
+        <div className="page__header-text">
+          <h1 className="page__title">Categorization Rules</h1>
+          <p className="page__subtitle">Create and manage automatic transaction categorization rules.</p>
         </div>
       </header>
 
-      <section className="panel">
+      <section className="section">
         <RulesList
           ref={rulesListRef}
           onCreateRule={handleCreateClick}

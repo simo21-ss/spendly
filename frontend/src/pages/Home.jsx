@@ -120,19 +120,19 @@ export default function Home() {
   const statsList = [
     {
       icon: Receipt,
-      iconClass: 'stat__icon stat__icon--emerald',
+      iconClass: 'card__icon card__icon--primary',
       value: stats.transactionCount.toString(),
       label: 'Transactions',
     },
     {
       icon: DollarSign,
-      iconClass: 'stat__icon stat__icon--emerald',
+      iconClass: 'card__icon card__icon--accent',
       value: `$${stats.income.toFixed(2)}`,
       label: 'Income',
     },
     {
       icon: DollarSign,
-      iconClass: 'stat__icon stat__icon--amber',
+      iconClass: 'card__icon card__icon--secondary',
       value: `$${stats.expenses.toFixed(2)}`,
       label: 'Expenses',
     },
@@ -187,25 +187,27 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="grid3">
+      <section className="card-grid">
         {features.map((f) => {
           const Icon = f.icon
           return (
             <div key={f.title} className="card">
-              <div className="card__top">
+              <div className="card__header">
                 <div className={f.iconClass}>
                   <Icon />
                 </div>
-                <div className="card__info">
+                <div className="card__content">
                   <h2 className="card__title">{f.title}</h2>
-                  <p className="card__desc">{f.desc}</p>
+                  <p className="card__description">{f.desc}</p>
                 </div>
                 {f.pill && <span className={f.pillClass}>{f.pill}</span>}
               </div>
-              <Link className="btn btn--secondary" to={f.to}>
-                {f.btnLabel}
-                <ArrowRight size={14} />
-              </Link>
+              <div className="card__footer">
+                <Link className="btn btn--secondary" to={f.to} style={{ width: '100%' }}>
+                  {f.btnLabel}
+                  <ArrowRight size={14} />
+                </Link>
+              </div>
             </div>
           )
         })}

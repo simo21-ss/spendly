@@ -64,8 +64,9 @@
 .rulesTable {
   border-radius: var(--radius);
   overflow-x: auto;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-light);
   background: var(--surface-card);
+  box-shadow: var(--shadow-sm);
   animation: fadeUp 0.3s ease-out;
 }
 
@@ -74,14 +75,14 @@
   grid-template-columns: 80px 180px 100px 200px 140px 100px 120px;
   gap: 12px;
   padding: 14px 16px;
-  background: var(--surface-100);
-  border-bottom: 1px solid var(--border);
+  background: var(--surface-50);
+  border-bottom: 1px solid var(--border-light);
   font-weight: 600;
   font-size: 12px;
   min-width: 920px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 .rulesTable__col {
@@ -104,9 +105,20 @@
   background: rgba(5, 150, 105, 0.05);
 }
 
+.rulesTable__col--sortable svg {
+  color: var(--text-muted);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
 .rulesTable__col--sortable.sorted {
   color: var(--primary);
   font-weight: 700;
+}
+
+.rulesTable__col--sortable.sorted svg {
+  color: var(--primary);
+  opacity: 1;
 }
 
 .rulesTable__col--sortable svg {
@@ -274,15 +286,6 @@
   border-color: #dc2626;
   color: #dc2626;
   background: rgba(220, 38, 38, 0.05);
-}
-
-.rulesList__stats {
-  padding: 12px 16px;
-  background: var(--surface-100);
-  border-radius: 8px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  font-weight: 600;
 }
 
 /* Responsive */
@@ -473,4 +476,50 @@
   background: #b91c1c;
   border-color: #b91c1c;
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--surface-card);
+  border-top: 1px solid var(--border-light);
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.pagination__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1.5px solid var(--border);
+  background: var(--surface-card);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination__button:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--surface-100);
+  color: var(--primary);
+}
+
+.pagination__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination__info {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  min-width: 160px;
+  text-align: center;
 }

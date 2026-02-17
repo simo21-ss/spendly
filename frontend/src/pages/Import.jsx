@@ -809,25 +809,25 @@ export default function ImportPage() {
 
   return (
     <div className="page">
-      <header className="pageHeader">
-        <div className="pageHeader__icon">
+      <header className="page__header">
+        <div className="page__header-icon">
           <Upload />
         </div>
-        <div className="pageHeader__text">
-          <h1 className="pageTitle">Import Data</h1>
-          <p className="muted">
+        <div className="page__header-text">
+          <h1 className="page__title">Import Data</h1>
+          <p className="page__subtitle">
             Import transactions from CSV or JSON files
           </p>
         </div>
       </header>
 
       {/* Import History */}
-      <div className="panel imports-history">
-        <div className="imports-history-header">
-          <div className="imports-history-title">
+      <section className="section">
+        <div className="section__header">
+          <h2 className="section__title">
             <History size={20} />
-            <h3>Recent Imports</h3>
-          </div>
+            Recent Imports
+          </h2>
         </div>
         {renderImportLauncher()}
         {importsLoading ? (
@@ -871,7 +871,7 @@ export default function ImportPage() {
               ))}
             </div>
           )}
-        </div>
+      </section>
 
       {isImportModalOpen && (
         <>

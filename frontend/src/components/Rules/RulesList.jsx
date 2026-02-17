@@ -1,9 +1,10 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { Edit2, Trash2, Eye, EyeOff, Plus, AlertCircle, X, ChevronUp, ChevronDown } from 'lucide-react';
+import { Edit2, Trash2, Eye, EyeOff, Plus, AlertCircle, X, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { getRules, toggleRuleActive, deleteRule } from '../../api/client';
 import './RulesList.css';
 
 const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
+  const ITEMS_PER_PAGE = 25;
   const [rules, setRules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,6 +13,7 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [sortColumn, setSortColumn] = useState('priority');
   const [sortDirection, setSortDirection] = useState('asc');
+  const [currentPage, setCurrentPage] = useState(1);
 
   useImperativeHandle(ref, () => ({
     addOrUpdateRule: (savedRule) => {
@@ -32,6 +34,7 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
 
   useEffect(() => {
     loadRules();
+    setCurrentPage(1);
   }, [filterActive, filterSystem]);
 
   async function loadRules() {
@@ -128,11 +131,19 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
     });
   }
 
+  function getPaginatedRules() {
+    const sorted = getSortedRules();
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return sorted.slice(start, start + ITEMS_PER_PAGE);
+  }
+
   const SortIcon = ({ column }) => {
-    if (sortColumn !== column) return null;
-    return sortDirection === 'asc' ? 
-      <ChevronUp size={14} /> : 
-      <ChevronDown size={14} />;
+    if (sortColumn === column) {
+      return sortDirection === 'asc' ? 
+        <ChevronUp size={14} /> : 
+        <ChevronDown size={14} />;
+    }
+    return <ArrowUpDown size={14} />;
   };
 
   if (loading) {
@@ -216,7 +227,7 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
           </div>
 
           <div className="rulesTable__body">
-            {getSortedRules().map((rule) => (
+            {getPaginatedRules().map((rule) => (
               <div key={rule.id} className="rulesTable__row">
                 <div className="rulesTable__col rulesTable__col--priority">
                   <span className="rulePriority">{rule.priority}</span>
@@ -278,12 +289,33 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
               </div>
             ))}
           </div>
+
+          {/* Pagination */}
+          {getSortedRules().length > ITEMS_PER_PAGE && (
+            <div className="pagination">
+              <button
+                className="pagination__button"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                title="Previous page"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <div className="pagination__info">
+                Page {currentPage} of {Math.ceil(getSortedRules().length / ITEMS_PER_PAGE)}
+              </div>
+              <button
+                className="pagination__button"
+                onClick={() => setCurrentPage(p => p + 1)}
+                disabled={currentPage >= Math.ceil(getSortedRules().length / ITEMS_PER_PAGE)}
+                title="Next page"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
         </div>
       )}
-
-      <div className="rulesList__stats">
-        Total: {rules.length} | Active: {rules.filter(r => r.isActive).length} | System: {rules.filter(r => r.isSystemRule).length}
-      </div>
 
       {deleteConfirm && (
         <>

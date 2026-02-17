@@ -25,37 +25,40 @@ export default function CategoriesPage() {
 
   return (
     <div className="page">
-      <header className="pageHeader">
-        <div className="pageHeader__icon">
+      <header className="page__header">
+        <div className="page__header-icon">
           <Tags />
         </div>
-        <div className="pageHeader__text">
-          <h1 className="pageTitle">Categories</h1>
-          <p className="muted">View all transaction categories</p>
+        <div className="page__header-text">
+          <h1 className="page__title">Categories</h1>
+          <p className="page__subtitle">View all transaction categories</p>
         </div>
       </header>
 
-      <section className="panel">
+      <section className="section">
         {loading ? (
-          <div className="categoriesLoading">Loading categories...</div>
+          <div className="loading">Loading categories...</div>
+        ) : categories.length === 0 ? (
+          <div className="empty-state">
+            <Tags className="empty-state__icon" />
+            <h3 className="empty-state__title">No categories yet</h3>
+            <p className="empty-state__description">Categories will appear here as you create and manage them</p>
+          </div>
         ) : (
-          <div className="categoriesGrid">
+          <div className="card-grid">
             {categories.map(category => (
-              <div key={category.id} className="categoryCard">
-                <div className="categoryCard__icon" style={{ backgroundColor: category.color }}>
-                  {category.icon}
-                </div>
-                <div className="categoryCard__body">
-                  <h3 className="categoryCard__name">{category.name}</h3>
-                  <div className="categoryCard__stats">
-                    <span>{category._count.rules} rules</span>
-                    <span>•</span>
-                    <span>{category._count.transactions} transactions</span>
+              <div key={category.id} className="card">
+                <div className="card__header">
+                  <div className="card__icon card__icon--primary" style={{ backgroundColor: category.color }}>
+                    {category.icon}
+                  </div>
+                  <div className="card__content">
+                    <h3 className="card__title">{category.name}</h3>
+                    <p className="card__description">
+                      {category._count.rules} rules • {category._count.transactions} transactions
+                    </p>
                   </div>
                 </div>
-                {category.isSystem && (
-                  <div className="categoryCard__badge">System</div>
-                )}
               </div>
             ))}
           </div>
