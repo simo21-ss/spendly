@@ -146,6 +146,33 @@ export async function getTransactions(filters = {}) {
   return response.json();
 }
 
+export async function getAllTransactions(filters = {}) {
+  const take = filters.take ?? 500;
+  const maxPages = filters.maxPages ?? 40;
+  let skip = 0;
+  let page = 0;
+  let totalPages = 1;
+  const allTransactions = [];
+
+  while (page < totalPages && page < maxPages) {
+    const data = await getTransactions({
+      ...filters,
+      skip,
+      take
+    });
+    const batch = data.transactions || [];
+    allTransactions.push(...batch);
+
+    totalPages = data.pagination?.pages ?? (batch.length < take ? page + 1 : page + 2);
+    page += 1;
+    skip += take;
+
+    if (batch.length < take) break;
+  }
+
+  return allTransactions;
+}
+
 export async function createTransaction(data) {
   const response = await fetch(`${API_BASE_URL}/transactions`, {
     method: 'POST',
