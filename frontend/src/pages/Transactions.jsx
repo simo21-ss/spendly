@@ -200,7 +200,12 @@ export default function TransactionsPage() {
 
     try {
       await deleteTransaction(deleteConfirm.id);
-      setTransactions(transactions.filter(txn => txn.id !== deleteConfirm.id));
+      const nextTransactions = transactions.filter(txn => txn.id !== deleteConfirm.id);
+      setTransactions(nextTransactions);
+      setTotalCount((prev) => Math.max(0, prev - 1));
+      if (nextTransactions.length === 0 && currentPage > 1) {
+        setCurrentPage((prev) => Math.max(1, prev - 1));
+      }
       setDeleteConfirm(null);
     } catch (err) {
       setError('Failed to delete transaction: ' + err.message);
@@ -359,9 +364,6 @@ export default function TransactionsPage() {
         ) : (
           <>
             <div className="transactions-summary">
-              <span className="summary-text">
-                Showing {transactions.length} transaction{transactions.length !== 1 ? 's' : ''}
-              </span>
               <div className="summary-actions">
                 <div className="column-chooser" ref={columnMenuRef}>
                   <button
@@ -509,27 +511,32 @@ export default function TransactionsPage() {
             </div>
 
             {/* Pagination */}
-            {totalCount > ITEMS_PER_PAGE && (
+            {totalCount > 0 && (
               <div className="pagination">
-                <button
-                  className="pagination__button"
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  title="Previous page"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <div className="pagination__info">
-                  Page {currentPage} of {Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                <div className="pagination__controls">
+                  <button
+                    className="pagination__button"
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    title="Previous page"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <div className="pagination__info">
+                    Page {currentPage} of {Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                  </div>
+                  <button
+                    className="pagination__button"
+                    onClick={() => setCurrentPage(p => p + 1)}
+                    disabled={currentPage >= Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                    title="Next page"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
                 </div>
-                <button
-                  className="pagination__button"
-                  onClick={() => setCurrentPage(p => p + 1)}
-                  disabled={currentPage >= Math.ceil(totalCount / ITEMS_PER_PAGE)}
-                  title="Next page"
-                >
-                  <ChevronRight size={16} />
-                </button>
+                <div className="pagination__summary">
+                  Showing {transactions.length} of {totalCount} transaction{totalCount !== 1 ? 's' : ''}
+                </div>
               </div>
             )}
           </>

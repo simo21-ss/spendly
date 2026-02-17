@@ -158,8 +158,6 @@
 .rulesTable__body {
   display: flex;
   flex-direction: column;
-  max-height: 600px;
-  overflow-y: auto;
 }
 
 .rulesTable__row {
@@ -480,14 +478,32 @@
 
 /* Pagination */
 .pagination {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: center;
   gap: 16px;
   padding: 16px 20px;
   background: var(--surface-card);
   border-top: 1px solid var(--border-light);
   border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.pagination__summary {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  grid-column: 3;
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.pagination__controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  grid-column: 2;
+  justify-self: center;
+  white-space: nowrap;
 }
 
 .pagination__button {

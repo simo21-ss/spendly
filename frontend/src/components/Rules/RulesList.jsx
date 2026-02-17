@@ -14,6 +14,7 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
   const [sortColumn, setSortColumn] = useState('priority');
   const [sortDirection, setSortDirection] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   useImperativeHandle(ref, () => ({
     addOrUpdateRule: (savedRule) => {
@@ -26,6 +27,7 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
           return updated;
         } else {
           // Add new rule at the beginning
+          setTotalCount((prev) => prev + 1);
           return [savedRule, ...currentRules];
         }
       });
@@ -33,9 +35,12 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
   }));
 
   useEffect(() => {
-    loadRules();
     setCurrentPage(1);
   }, [filterActive, filterSystem]);
+
+  useEffect(() => {
+    loadRules();
+  }, [filterActive, filterSystem, currentPage]);
 
   async function loadRules() {
     try {
@@ -45,8 +50,16 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
       if (filterActive !== null) filters.isActive = filterActive;
       if (filterSystem !== null) filters.isSystemRule = filterSystem;
 
-      const data = await getRules({ ...filters, take: 1000 });
-      setRules(data.rules || []);
+      const skip = (currentPage - 1) * ITEMS_PER_PAGE;
+      const data = await getRules({ ...filters, skip, take: ITEMS_PER_PAGE });
+      const nextRules = data.rules || [];
+      const nextTotal = data.pagination?.total ?? nextRules.length;
+      setRules(nextRules);
+      setTotalCount(nextTotal);
+      const totalPages = Math.max(1, Math.ceil(nextTotal / ITEMS_PER_PAGE));
+      if (currentPage > totalPages) {
+        setCurrentPage(totalPages);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -70,8 +83,7 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
     if (!deleteConfirm) return;
     try {
       await deleteRule(deleteConfirm.id);
-      // Update state directly without reloading
-      setRules(rules.filter(r => r.id !== deleteConfirm.id));
+      await loadRules();
       setDeleteConfirm(null);
     } catch (err) {
       setError(err.message);
@@ -131,12 +143,6 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
     });
   }
 
-  function getPaginatedRules() {
-    const sorted = getSortedRules();
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return sorted.slice(start, start + ITEMS_PER_PAGE);
-  }
-
   const SortIcon = ({ column }) => {
     if (sortColumn === column) {
       return sortDirection === 'asc' ? 
@@ -149,6 +155,8 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
   if (loading) {
     return <div className="rulesLoading">Loading rules...</div>;
   }
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
 
   return (
     <div className="rulesList">
@@ -180,7 +188,7 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
         </button>
       </div>
 
-      {rules.length === 0 ? (
+      {totalCount === 0 ? (
         <div className="rulesEmpty">
           <p>No rules found. {filterActive === true || filterSystem !== null ? 'Try adjusting filters.' : 'Create one to get started!'}</p>
         </div>
@@ -227,7 +235,7 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
           </div>
 
           <div className="rulesTable__body">
-            {getPaginatedRules().map((rule) => (
+            {getSortedRules().map((rule) => (
               <div key={rule.id} className="rulesTable__row">
                 <div className="rulesTable__col rulesTable__col--priority">
                   <span className="rulePriority">{rule.priority}</span>
@@ -291,27 +299,32 @@ const RulesList = forwardRef(({ onEditRule, onCreateRule }, ref) => {
           </div>
 
           {/* Pagination */}
-          {getSortedRules().length > ITEMS_PER_PAGE && (
+          {totalCount > 0 && (
             <div className="pagination">
-              <button
-                className="pagination__button"
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                title="Previous page"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              <div className="pagination__info">
-                Page {currentPage} of {Math.ceil(getSortedRules().length / ITEMS_PER_PAGE)}
+              <div className="pagination__controls">
+                <button
+                  className="pagination__button"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  title="Previous page"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <div className="pagination__info">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <button
+                  className="pagination__button"
+                  onClick={() => setCurrentPage(p => p + 1)}
+                  disabled={currentPage >= totalPages}
+                  title="Next page"
+                >
+                  <ChevronRight size={16} />
+                </button>
               </div>
-              <button
-                className="pagination__button"
-                onClick={() => setCurrentPage(p => p + 1)}
-                disabled={currentPage >= Math.ceil(getSortedRules().length / ITEMS_PER_PAGE)}
-                title="Next page"
-              >
-                <ChevronRight size={16} />
-              </button>
+              <div className="pagination__summary">
+                Showing {rules.length} of {totalCount} rule{totalCount !== 1 ? 's' : ''}
+              </div>
             </div>
           )}
         </div>
