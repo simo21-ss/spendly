@@ -1,4 +1,4 @@
-# Finance Categorizer 💰
+# Spendly 💰
 
 A personal finance tracker that automatically categorizes transactions using customizable rules.
 
